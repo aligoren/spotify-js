@@ -1,0 +1,9 @@
+{
+  "name": "spotify",
+  "version": "1.0.0",
+  "description": " An spotify wrapper for JavaScript ",
+  "main": "index.js",
+  "repository": "https://github.com/aligoren/spotify-js",
+  "author": "Ali GÖREN",
+  "license": "Unlicensed"
+}
