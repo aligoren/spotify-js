@@ -1,7 +1,7 @@
 import Spotify from "./spotify.js";
 
 const config = {
-    client_id: 'bc06e423b40c4e75b806c762bdf0203a',
+    client_id: 'YOUR_API_KEY',
     callback_address: window.location.href
 }
 
