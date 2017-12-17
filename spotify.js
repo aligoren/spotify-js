@@ -3,11 +3,24 @@ class Spotify {
         this.client_id = client_id;
         this.callback_address = callback_address;
         this.generate_url = '';
-        this.w = null;
         this.checkToken();
         this.access_token = localStorage.getItem('access_token');
     }
 
+    /**
+     * This method will return header informations.
+     * @return {Object} returns header
+     */
+    headers() {
+        return {
+            'Authorization': 'Bearer ' + this.access_token
+        }
+    }
+
+    /**
+     * This method checking is there hash in window.location.
+     * If there is hash, pop-up window will close.
+     */
     checkToken() {
         window.addEventListener('DOMContentLoaded', () => {
             if(window.location.hash) {
@@ -21,6 +34,10 @@ class Spotify {
         })
     }
 
+    /**
+     * This method returns generated oauth url
+     * @return {string} this.generate_url Generated url
+     */
     generateUrl() {
         this.generate_url = `https://accounts.spotify.com/authorize?response_type=token&client_id=${this.client_id}&redirect_uri=${this.callback_address}&scope=user-read-email`
         
@@ -33,7 +50,9 @@ class Spotify {
      * @param {function} [callback] The callback function to get some information. Optional
      * @example
      *  spotify.login('.btn');
+     * 
      * @example
+     * 
      *  spotify.login('.btn', (data) => {
      *      data.btn.display = 'none';
      *      console.log(data.url);
@@ -49,7 +68,7 @@ class Spotify {
 
         btn.addEventListener("click", () => {
 
-            this.w = window.open(this.generateUrl(), 'Spotify', 'menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=' + width + ', height=' + height + ', top=' + top + ', left=' + left);
+            window.open(this.generateUrl(), 'Spotify', 'menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=' + width + ', height=' + height + ', top=' + top + ', left=' + left);
             
         });
         
@@ -66,7 +85,9 @@ class Spotify {
     /**
      * This method will information about your account
      * @return {Promise} Return Promise with fetch method
+     * 
      * @example
+     * 
      * spotify.me().then(resp => {
      *  console.log("me", resp);
      * })
@@ -74,9 +95,7 @@ class Spotify {
     me() {
         return fetch('https://api.spotify.com/v1/me', {
             method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + this.access_token
-            }
+            headers: this.headers()
         })
         .then(resp => resp.json())
         .then(obj => obj)
@@ -94,6 +113,7 @@ class Spotify {
      * @return {Promise} Return Promise with fetch method
      * 
      * @example
+     * 
      * spotify.search({
      *   query: 'Tarkan',
      *   type: 'track,artist',
@@ -113,8 +133,7 @@ class Spotify {
             } else {
                 data[k] = '';
             }
-            
-        })
+        });
 
         let extra_fields = `${data.market}${data.limit}${data.offset}`;
         
@@ -122,9 +141,129 @@ class Spotify {
 
         return fetch(url, {
             method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + this.access_token
+            headers: this.headers()
+        })
+        .then(resp => resp.json())
+        .then(obj => obj)
+        .catch(error => error);
+    }
+
+    /**
+     * This method will return information about an album.
+     * @param {Object} id AlbumID required
+     * @param {Object} [market] Optional market filter
+     * 
+     * @return {Promise} Return Promise with fetch method
+     * 
+     * @example
+     * 
+     * spotify.album({
+     *     id: '4fJzakARJP2UfOjSj5Q9s1',
+     *     market: 'TR'
+     * }).then(resp => {
+     *     console.log(resp)
+     * });
+     */
+    album(data) {
+
+        let extras = ['market'];
+        
+        extras.forEach((k, v) => {
+            if(data[k]) {
+                data[k] = `?${k}=${data[k]}`
+            } else {
+                data[k] = '';
             }
+        });
+
+        let url = `https://api.spotify.com/v1/albums/${data.id}${data.market}`;
+
+        return fetch(url, {
+            method: 'GET',
+            headers: this.headers()
+        })
+        .then(resp => resp.json())
+        .then(obj => obj)
+        .catch(error => error);
+    }
+
+    /**
+     * This method will return information about albums.
+     * @param {Object} ids multiple ids with comma - required
+     * @param {Object} [market] Optional market filter
+     * 
+     * @return {Promise} Return Promise with fetch method
+     * 
+     * @example
+     * 
+     * spotify.albums({
+     *     ids: '4fJzakARJP2UfOjSj5Q9s1,06EBiLh3V0q2dOUdXnic7e',
+     *     market: 'TR'
+     * }).then(resp => {
+     *     console.log(resp)
+     * });
+     */
+    albums(data) {
+        let extras = ['market'];
+
+        extras.forEach((k, v) => {
+            if(data[k]) {
+                data[k] = `&${k}=${data[k]}`
+            } else {
+                data[k] = '';
+            }
+        })
+
+        let url = `https://api.spotify.com/v1/albums?ids=${data.ids}${data.market}`;
+
+        return fetch(url, {
+            method: 'GET',
+            headers: this.headers()
+        })
+        .then(resp => resp.json())
+        .then(obj => obj)
+        .catch(error => error);
+    }
+
+    /** 
+     * This method will return tracks of album.
+     * @param {Object} id album id
+     * @param {Object} [market] Your country code egg: TR
+     * @param {Object} [limit] How many results will return at one time.
+     * @param {Object} [offset] The starting position of data. Instead of pagination.
+     * 
+     * @return {Promise} Return Promise with fetch method
+     * 
+     * @example
+     * 
+     * spotify.tracks({
+     *   id: '4fJzakARJP2UfOjSj5Q9s1',
+     *   market: 'TR',
+     *   limit: 10,
+     *   offset: 1
+     * }).then(resp => {
+     *   console.log(resp);
+     * })
+     * 
+    */
+    tracks(data) {
+        let extras = ['market', 'limit', 'offset'];
+        
+        extras.forEach((k, v) => {
+            if(data[k]) {
+                data[k] = `&${k}=${data[k]}`
+            } else {
+                data[k] = '';
+            }
+        });
+
+        let extra_fields = `?${data.market}${data.limit}${data.offset}`.replace('?&', '?');
+        
+        let url = `https://api.spotify.com/v1/albums/${data.id}/tracks${extra_fields}`;
+
+        return fetch(url, {
+            method: 'GET',
+            headers: this.headers()
         })
         .then(resp => resp.json())
         .then(obj => obj)
