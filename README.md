@@ -126,3 +126,15 @@ spotify.tracks({
     //
 })
 ```
+
+## Get Single Artist
+
+Single parameter required.
+
+```javascript
+spotify
+    .artist('2yMN0IP20GOaN6q0p0zL5k')
+    .then(resp => {
+        //
+    })
+```

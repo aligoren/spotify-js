@@ -43,3 +43,9 @@ spotify.tracks({
 }).then(resp => {
     //console.log(resp);
 })
+
+spotify
+    .artist('2yMN0IP20GOaN6q0p0zL5k')
+    .then(resp => {
+        console.log(resp);
+    })

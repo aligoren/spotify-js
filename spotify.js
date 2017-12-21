@@ -1,5 +1,5 @@
 class Spotify {
-    constructor({client_id, callback_address}) {
+    constructor({ client_id, callback_address }) {
         this.client_id = client_id;
         this.callback_address = callback_address;
         this.generate_url = '';
@@ -23,11 +23,11 @@ class Spotify {
      */
     checkToken() {
         window.addEventListener('DOMContentLoaded', () => {
-            if(window.location.hash) {
+            if (window.location.hash) {
                 let hash = window.location.hash;
                 let access_token = hash.split('#access_token=')[1].split('&')[0];
                 localStorage.setItem('access_token', access_token);
-                
+
                 window.location.hash = `access_token=${localStorage.getItem('access_token')}`;
                 window.close();
             }
@@ -40,7 +40,7 @@ class Spotify {
      */
     generateUrl() {
         this.generate_url = `https://accounts.spotify.com/authorize?response_type=token&client_id=${this.client_id}&redirect_uri=${this.callback_address}&scope=user-read-email`
-        
+
         return this.generate_url;
     }
 
@@ -69,17 +69,17 @@ class Spotify {
         btn.addEventListener("click", () => {
 
             window.open(this.generateUrl(), 'Spotify', 'menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=' + width + ', height=' + height + ', top=' + top + ', left=' + left);
-            
+
         });
-        
-        if(callback) {
+
+        if (callback) {
             let data = {
                 btn: btn,
                 url: this.generateUrl()
             }
             callback(data);
         }
-        
+
     }
 
     /**
@@ -97,9 +97,9 @@ class Spotify {
             method: 'GET',
             headers: this.headers()
         })
-        .then(resp => resp.json())
-        .then(obj => obj)
-        .catch(error => error);
+            .then(resp => resp.json())
+            .then(obj => obj)
+            .catch(error => error);
     }
 
     /** 
@@ -128,7 +128,7 @@ class Spotify {
         let extras = ['market', 'limit', 'offset'];
 
         extras.forEach((k, v) => {
-            if(data[k]) {
+            if (data[k]) {
                 data[k] = `&${k}=${data[k]}`
             } else {
                 data[k] = '';
@@ -136,16 +136,16 @@ class Spotify {
         });
 
         let extra_fields = `${data.market}${data.limit}${data.offset}`;
-        
+
         let url = `https://api.spotify.com/v1/search?q=${data.query}&type=${data.type}${extra_fields}`;
 
         return fetch(url, {
             method: 'GET',
             headers: this.headers()
         })
-        .then(resp => resp.json())
-        .then(obj => obj)
-        .catch(error => error);
+            .then(resp => resp.json())
+            .then(obj => obj)
+            .catch(error => error);
     }
 
     /**
@@ -167,9 +167,9 @@ class Spotify {
     album(data) {
 
         let extras = ['market'];
-        
+
         extras.forEach((k, v) => {
-            if(data[k]) {
+            if (data[k]) {
                 data[k] = `?${k}=${data[k]}`
             } else {
                 data[k] = '';
@@ -182,9 +182,9 @@ class Spotify {
             method: 'GET',
             headers: this.headers()
         })
-        .then(resp => resp.json())
-        .then(obj => obj)
-        .catch(error => error);
+            .then(resp => resp.json())
+            .then(obj => obj)
+            .catch(error => error);
     }
 
     /**
@@ -207,7 +207,7 @@ class Spotify {
         let extras = ['market'];
 
         extras.forEach((k, v) => {
-            if(data[k]) {
+            if (data[k]) {
                 data[k] = `&${k}=${data[k]}`
             } else {
                 data[k] = '';
@@ -220,9 +220,9 @@ class Spotify {
             method: 'GET',
             headers: this.headers()
         })
-        .then(resp => resp.json())
-        .then(obj => obj)
-        .catch(error => error);
+            .then(resp => resp.json())
+            .then(obj => obj)
+            .catch(error => error);
     }
 
     /** 
@@ -248,9 +248,9 @@ class Spotify {
     */
     tracks(data) {
         let extras = ['market', 'limit', 'offset'];
-        
+
         extras.forEach((k, v) => {
-            if(data[k]) {
+            if (data[k]) {
                 data[k] = `&${k}=${data[k]}`
             } else {
                 data[k] = '';
@@ -258,16 +258,28 @@ class Spotify {
         });
 
         let extra_fields = `?${data.market}${data.limit}${data.offset}`.replace('?&', '?');
-        
+
         let url = `https://api.spotify.com/v1/albums/${data.id}/tracks${extra_fields}`;
 
         return fetch(url, {
             method: 'GET',
             headers: this.headers()
         })
-        .then(resp => resp.json())
-        .then(obj => obj)
-        .catch(error => error);
+            .then(resp => resp.json())
+            .then(obj => obj)
+            .catch(error => error);
+    }
+
+    artist(id) {
+        let url = `https://api.spotify.com/v1/artists/${id}`;
+
+        return fetch(url, {
+            method: 'GET',
+            headers: this.headers()
+        })
+            .then(resp => resp.json())
+            .then(obj => obj)
+            .catch(error => error);
     }
 }
 
