@@ -23,7 +23,7 @@ const spotify = new Spotify(config);
 
 ## Authentication
 
-You need to login for access token. After initialization you must set element to click. There is two ways as below:
+You need to login for access token. After initialization you must set element to click. There are two ways as below:
 
 First way you just click login to get access token. Access token will save in localStorage.
 
@@ -137,4 +137,32 @@ spotify
     .then(resp => {
         //
     })
+```
+
+## Get Multiple Artists
+
+```javascript
+spotify
+    .artists('2yMN0IP20GOaN6q0p0zL5k,29TtKR0RUKu66QjYwtycd9')
+    .then(resp => {
+        //
+    })
+```
+
+## Get Artist's Albums
+
+**Required Parameters:** [id]
+
+**Optional Parameters:** [type, market, limit, offset]
+
+```javascript
+spotify.artistAlbums({
+    id: '29TtKR0RUKu66QjYwtycd9',
+    type: 'single,album',
+    market: 'TR',
+    limit: 10,
+    offset: 1
+}).then(resp => {
+    //
+});
 ```

@@ -270,9 +270,95 @@ class Spotify {
             .catch(error => error);
     }
 
+    /**
+     * This method will return single artist information
+     * @param {integer} id 
+     * @return {Promise} return promise
+     * 
+     * @example
+     * spotify
+     *   .artist('2yMN0IP20GOaN6q0p0zL5k')
+     *   .then(resp => {
+     *       console.log(resp);
+     *   })
+     */
     artist(id) {
         let url = `https://api.spotify.com/v1/artists/${id}`;
 
+        return fetch(url, {
+            method: 'GET',
+            headers: this.headers()
+        })
+            .then(resp => resp.json())
+            .then(obj => obj)
+            .catch(error => error);
+    }
+
+    /**
+     * This method will return multiple artist information
+     * @param {string} ids with comma
+     * 
+     * @return {Promise} return promise
+     * 
+     * @example
+     * spotify.
+     *  artists('2yMN0IP20GOaN6q0p0zL5k,29TtKR0RUKu66QjYwtycd9').
+     *  then(resp => {
+     *    console.log(resp);
+     * })
+     */
+    artists(ids) {
+        let url = `https://api.spotify.com/v1/artists?ids=${ids}`;
+
+        return fetch(url, {
+            method: 'GET',
+            headers: this.headers()
+        })
+            .then(resp => resp.json())
+            .then(obj => obj)
+            .catch(error => error);
+    }
+
+    /**
+     * This method will return albums of any artist.
+     * @param {Object} data.id Required
+     * @param {Object} data.type Required
+     * @param {Object} [data.market] Optional
+     * @param {Object} [data.limit] Optional
+     * @param {Object} [data.offset] Optional
+     * 
+     * @return {Promise} Will return promise
+     * 
+     * @example
+     * spotify.artistAlbums({
+     *    id: '29TtKR0RUKu66QjYwtycd9',
+     *    type:
+     * }).then(resp => {
+     *    console.log(resp);
+     * });
+     */
+    artistAlbums(data) {
+        let extras = ['album_type', 'market', 'limit', 'offset'];
+        
+        data['album_type'] = data.type;
+
+        extras.forEach((k, v) => {
+            let amp = (v == 0) ? '?' : '&';
+            
+            if (data[k]) {
+                data[k] = `${amp}${k}=${data[k]}`
+            } else {
+                data[k] = '';
+            }
+        });
+
+        
+
+        let extra_fields = `?${data.album_type}${data.market}${data.limit}${data.offset}`.replace('??', '?').replace('?&', '?');
+
+        let url = `https://api.spotify.com/v1/artists/${data.id}/albums${extra_fields}`;
+        
+        
         return fetch(url, {
             method: 'GET',
             headers: this.headers()

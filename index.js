@@ -42,10 +42,28 @@ spotify.tracks({
     offset: 1
 }).then(resp => {
     //console.log(resp);
-})
+});
 
 spotify
     .artist('2yMN0IP20GOaN6q0p0zL5k')
     .then(resp => {
-        console.log(resp);
-    })
+        //console.log(resp);
+    });
+
+
+spotify
+    .artists('2yMN0IP20GOaN6q0p0zL5k,29TtKR0RUKu66QjYwtycd9')
+    .then(resp => {
+        //console.log(resp);
+    });
+
+
+spotify.artistAlbums({
+    id: '29TtKR0RUKu66QjYwtycd9',
+    type: 'single,album',
+    market: 'TR',
+    limit: 10,
+    offset: 1
+}).then(resp => {
+    //console.log(resp);
+});
